@@ -1,78 +1,59 @@
-# Análisis de inventario: demanda y rentabilidad
+# 📊 Optimización de Contactabilidad y Salud de Línea (ANI)
 
-# 📦 Optimización de Inventario: Demanda y Rentabilidad
-[![Power BI](https://img.shields.io/badge/Tool-Power%20BI-yellow.svg)](https://powerbi.microsoft.com/)
-[![Supply Chain](https://img.shields.io/badge/Focus-Supply_Chain_Analytics-orange.svg)]()
+Este proyecto desarrolla un ecosistema analítico de punta a punta (End-to-End) diseñado para transformar la operación de un Contact Center de una marcación reactiva a una **estrategia preventiva basada en datos**. 
 
-## 🎯 Objetivo
-Desarrollar un sistema de control de inventarios preciso para minimizar quiebres de stock y optimizar el capital de trabajo. El proyecto integra métricas de demanda semanal y una matriz de clasificación avanzada para priorizar productos según su impacto financiero y estabilidad de ventas.
+Utilizando **DuckDB** para el procesamiento masivo de datos y **Machine Learning con Python**, el sistema detecta patrones de desgaste en las líneas telefónicas (ANIs) y predice el riesgo de bloqueo por SPAM antes de ejecutar la llamada.
 
----
+## 🚀 Tecnologías Utilizadas
+* **Motor de Datos:** DuckDB (OLAP de alto rendimiento).
+* **Lenguaje:** Python (Pandas, Scikit-Learn, XGBoost).
+* **Visualización:** Seaborn & Matplotlib (Reporting Ejecutivo).
+* **Entorno:** Google Colab.
 
-## 📊 Indicadores Clave de Gestión (KPIs)
-El dashboard se centra en la salud operativa del almacén:
-* **Índice de Rotación:** Frecuencia de renovación del stock.
-* **Valorización del Almacén:** Valor económico total de las existencias actuales.
-* **Gestión de Reorden:** Cálculo automatizado de **Puntos de Reorden (ROP)** y **Stock de Seguridad** para mitigar la incertidumbre en el suministro.
-* **Alertas de Stock Status:** Clasificación visual de productos en estado *Disponible*, *Bajo Punto de Reorden* o *Agotado*.
+## 🧠 El Problema: El "Tipping Point" del SPAM
+La marcación saliente descontrolada provoca el "quemado" de las líneas. Al superar un umbral crítico de intentos, las operadoras (Carriers) bloquean el número, reduciendo la tasa de contacto a cero.
 
 
 
----
+## 🛠️ Arquitectura del Proyecto
 
-## 🔬 Metodología de Clasificación ABC-XYZ
-Para una gestión eficiente, implementé una matriz de doble entrada que cruza la rentabilidad con la previsibilidad de la demanda:
+### 1. Auditoría y Limpieza de Datos
+Se procesaron **50,000 registros operativos** mediante DuckDB.
+* **Gestión de Nulos:** Identificación de fugas de información en `CallDuration` (9.9% de nulos) e imputación estadística en `WaitTime`.
+* **Transformación:** Generación de variables de tiempo (bloques horarios) y métricas de acumulación por ANI.
 
-### 1. Clasificación ABC (Impacto en Ingresos)
-* **Clase A:** Productos críticos (Alta rentabilidad).
-* **Clase B:** Importancia moderada.
-* **Clase C:** Bajo impacto financiero.
+### 2. Clasificación Binaria con IA
+Se implementó un modelo de clasificación para predecir la **Probabilidad de Contacto Exitoso**.
+* **Variable Objetivo:** `es_contacto_exitoso` (1: Éxito, 0: Fallo/Bloqueo).
+* **Drivers Clave:** Se identificó que la `Tasa de Bloqueo Histórica` y la `Hora del Día` son los predictores más potentes del éxito operativo.
 
-### 2. Clasificación XYZ (Variabilidad de Demanda)
-* **X (Estable):** Demanda constante y predecible.
-* **Y (Moderada):** Sujeta a estacionalidad o ciclos.
-* **Z (Errática):** Demanda impredecible, difícil de pronosticar.
+<img width="984" height="583" alt="image" src="https://github.com/user-attachments/assets/ae6a3e2f-8ca8-448a-acaf-6ef67d8dc09c" />
 
+<img width="865" height="558" alt="image" src="https://github.com/user-attachments/assets/52e64d95-3c49-4bea-bb2b-14d3b9af57c6" />
 
-
----
-
-## 💡 Estrategia de Priorización Logística
-Basado en el cruce de variables, el sistema segmenta los esfuerzos de gestión:
-
-| Segmento | Prioridad de Gestión | Estrategia Sugerida |
-| :--- | :--- | :--- |
-| **AX / DX** | 🔥 **Crítica** | Suministro continuo y revisión de stock diaria. |
-| **BY** | ⚖️ **Moderada** | Planificación flexible y monitoreo de ciclos estacionales. |
-| **CZ / FZ** | 🧊 **Baja** | Gestión simplificada; monitorear tendencias para evitar stock muerto. |
-
----
-
-## 🛠️ Funcionalidades del Dashboard
-1.  **Seguimiento de Flujo de Pedidos:** Visualización del ciclo completo desde el pedido hasta la entrega.
-2.  **Cálculo de Demanda Semanal:** Análisis dinámico de pedidos por SKU para identificar tendencias de consumo.
-3.  **Monitor de SKUs a Reordenar:** Lista de acción inmediata para el departamento de compras.
+<img width="860" height="479" alt="image" src="https://github.com/user-attachments/assets/157f7fa9-ba84-497e-87ac-a27a4ed35ceb" />
 
 
 
----
-### ⚙️ Lógica de Cálculo del Modelo
-Para la clasificación XYZ, utilicé el **Coeficiente de Variación (CV)** sobre la demanda semanal:
+## 📈 Resultados y Diagnóstico
 
-$$CV = \frac{\sigma}{\bar{x}}$$
+### Matriz de Confusión Operativa
+El modelo demuestra una alta capacidad para identificar llamadas con riesgo de fallo, permitiendo al PM filtrar la base de datos antes de marcar.
 
-* **X (Estable):** $CV < 0.2$ (Variabilidad baja).
-* **Y (Variable):** $0.2 \leq CV \leq 0.5$ (Variabilidad moderada).
-* **Z (Errática):** $CV > 0.5$ (Variabilidad alta).
+<img width="673" height="604" alt="image" src="https://github.com/user-attachments/assets/90fa4d72-4fdf-4f94-8a6c-ab3c6969b495" />
 
-**Punto de Reorden (ROP) calculado como:**
-$$ROP = (Demanda\,Promedio \times Lead\,Time) + Stock\,de\,Seguridad$$
+
+### Métricas de Desempeño
+* **AUC-ROC:** 0.5133 (Identifica patrones base sobre el azar).
+* **Audit Log:** Total Rows: 50,000 | Nulls Handled: 7,490.
+
+<img width="713" height="577" alt="image" src="https://github.com/user-attachments/assets/53a9fee4-285c-4020-bbe5-fe4256711f79" />
+
+
+## 💡 Recomendaciones Estratégicas
+1.  **Regla de Oro (Hard-Limit):** No exceder los **7 intentos por hora** por cada ANI. Al 8vo intento, el riesgo de bloqueo sube un 10%.
+2.  **Enfriamiento de Líneas:** Rotar automáticamente cualquier ANI que presente una tasa de "Refused" superior al 5% en la última ventana de 30 minutos.
+3.  **Ajuste de Marcación:** Priorizar carteras en los bloques horarios donde el modelo detecta menor saturación de red.
 
 ---
-## 🚀 Conclusiones de Negocio
-Este modelo de análisis permite:
-* **Reducir costos de almacenamiento** al no sobre-stockear productos de baja rotación (Clase C).
-* **Garantizar disponibilidad** de los productos "A" que generan la mayoría de los ingresos.
-* **Mitigar riesgos** mediante el cálculo dinámico del stock de seguridad frente a fluctuaciones imprevistas de la demanda.
-
----
+**Desarrollado como solución técnica para la optimización de Contact Centers y prevención de SPAM.**
