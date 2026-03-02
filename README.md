@@ -1,4 +1,4 @@
-# 📊 Optimización de Contactabilidad y Salud de Línea (ANI)
+# 📊 SmartDial: Predictor de Riesgo de Bloqueo y Salud de Línea (ANI)
 
 Este proyecto desarrolla un ecosistema analítico de punta a punta (End-to-End) diseñado para transformar la operación de un Contact Center de una marcación reactiva a una **estrategia preventiva basada en datos**. 
 
